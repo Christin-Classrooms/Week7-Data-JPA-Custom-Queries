@@ -1,49 +1,124 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Fighters</title>
     <div th:insert="fragments/base :: assetsHead"></div>
 </head>
+
 <body>
-<nav th:replace="fragments/navbar :: navbar"></nav>
+    <nav th:replace="fragments/navbar :: navbar"></nav>
 
-<div class="app-container">
-    <div class="app-header text-center">
-        <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
-    </div>
+    <div class="app-container">
+        <div class="app-header text-center mb-4">
+            <h2>Fighters</h2>
+            <p class="text-muted">Total: <span th:text="${totalElements}">0</span> fighters</p>
+        </div>
 
-    <div class="players-card">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
-                    <td th:text="${fighter.health}">1000</td>
-                    <td th:text="${fighter.damage}">50.0</td>
-                    <td th:text="${fighter.resistance}">5.0</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="players-card">
+
+            <!-- Search / Filter Form -->
+            <div style="padding: 20px; border-bottom: 1px solid #e0e0e0;">
+                <form method="get" th:action="@{/fighters}"
+                    style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                    <div>
+                        <label style="display:block; font-weight:600; font-size:14px;">Search / Threshold</label>
+                        <input type="text" name="search" th:value="${search}" placeholder="Name or health value..."
+                            style="padding:8px 12px; border:1px solid #ddd; border-radius:4px;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:600; font-size:14px;">Filter Type</label>
+                        <select name="filterType" onchange="this.form.submit()"
+                            style="padding:8px; border:1px solid #ddd; border-radius:4px;">
+                            <option value="" th:selected="${filterType == ''}">All Fighters</option>
+                            <option value="name" th:selected="${filterType == 'name'}">By Name</option>
+                            <option value="health" th:selected="${filterType == 'health'}">By Health (&gt;)</option>
+                            <option value="strongest" th:selected="${filterType == 'strongest'}">Strongest</option>
+                            <option value="balanced" th:selected="${filterType == 'balanced'}">Balanced</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:600; font-size:14px;">Sort By</label>
+                        <select name="sort" onchange="this.form.submit()"
+                            style="padding:8px; border:1px solid #ddd; border-radius:4px;">
+                            <option value="id" th:selected="${sort=='id'}">ID</option>
+                            <option value="name" th:selected="${sort=='name'}">Name</option>
+                            <option value="health" th:selected="${sort=='health'}">Health</option>
+                            <option value="damage" th:selected="${sort=='damage'}">Damage</option>
+                            <option value="resistance" th:selected="${sort=='resistance'}">Resistance</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:600; font-size:14px;">Direction</label>
+                        <select name="direction" onchange="this.form.submit()"
+                            style="padding:8px; border:1px solid #ddd; border-radius:4px;">
+                            <option value="ASC" th:selected="${direction=='ASC'}">Ascending</option>
+                            <option value="DESC" th:selected="${direction=='DESC'}">Descending</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a th:href="@{/fighters}" class="btn btn-secondary">Clear</a>
+                </form>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive" th:with="flip=${direction=='ASC'?'DESC':'ASC'}">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th th:each="col : ${ {'name','health','damage','resistance'} }">
+                                <a th:href="@{/fighters(search=${search},filterType=${filterType},page=${currentPage},size=${pageSize},sort=${col},direction=${flip})}"
+                                    style="color:#333; text-decoration:none;" th:text="${#strings.capitalize(col)}"></a>
+                                <span th:if="${sort==col}" th:text="${direction=='ASC'?'▲':'▼'}"
+                                    style="font-size:11px; color:#999;"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="fighter, i : ${fighters}">
+                            <td th:text="${currentPage * pageSize + i.count}" class="text-muted"></td>
+                            <td th:text="${fighter.name}"></td>
+                            <td th:text="${fighter.health}"></td>
+                            <td th:text="${fighter.damage}"></td>
+                            <td th:text="${fighter.resistance}"></td>
+                        </tr>
+                        <tr th:if="${fighters.isEmpty()}">
+                            <td colspan="5" class="text-center text-muted py-3">No fighters found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div style="padding:12px 20px; border-top:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center; font-size:14px;"
+                th:with="base=@{/fighters(search=${search},filterType=${filterType},size=${pageSize},sort=${sort},direction=${direction})}">
+                <span>Page <strong th:text="${currentPage+1}"></strong> of <strong th:text="${totalPages}"></strong>
+                    &mdash; <span th:text="${totalElements}"></span> fighters</span>
+                <div style="display:flex; gap:4px;">
+                    <a th:href="${base+'&page=0'}"
+                        th:class="${currentPage==0}?'btn btn-sm btn-outline-secondary disabled':'btn btn-sm btn-outline-secondary'">«
+                        First</a>
+                    <a th:href="${base+'&page='+(currentPage-1)}"
+                        th:class="${!hasPrevious}?'btn btn-sm btn-outline-secondary disabled':'btn btn-sm btn-outline-secondary'">‹
+                        Prev</a>
+                    <a th:href="${base+'&page='+(currentPage+1)}"
+                        th:class="${!hasNext}?'btn btn-sm btn-outline-secondary disabled':'btn btn-sm btn-outline-secondary'">Next
+                        ›</a>
+                    <a th:href="${base+'&page='+(totalPages-1)}"
+                        th:class="${currentPage>=totalPages-1}?'btn btn-sm btn-outline-secondary disabled':'btn btn-sm btn-outline-secondary'">Last
+                        »</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
         </div>
     </div>
 
-    <div class="mt-3">
-        <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
-    </div>
-</div>
-
-<div th:insert="fragments/base :: assetsScripts"></div>
+    <div th:insert="fragments/base :: assetsScripts"></div>
 </body>
+
 </html>
