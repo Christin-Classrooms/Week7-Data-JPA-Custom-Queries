@@ -1,5 +1,6 @@
-# Maven
 HELP.md
+
+### Maven ###
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -10,13 +11,10 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
-
-# Maven wrapper
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# STS
+### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -25,13 +23,13 @@ buildNumber.properties
 .springBeans
 .sts4-cache
 
-# IntelliJ IDEA
+### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 
-# NetBeans
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -41,22 +39,22 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# VS Code
+### VS Code ###
 .vscode/
 
-# Compiled class file
+### Compiled class file ###
 *.class
 
-# Log file
+### Log file ###
 *.log
 
-# BlueJ files
+### BlueJ files ###
 *.ctxt
 
-# Mobile Tools for Java (J2ME)
+### Mobile Tools for Java (J2ME) ###
 .mtj.tmp/
 
-# Package Files
+### Package Files ###
 *.jar
 *.war
 *.nar
@@ -65,17 +63,10 @@ build/
 *.tar.gz
 *.rar
 
-# Virtual machine crash logs
+### Virtual machine crash logs ###
 hs_err_pid*
 replay_pid*
 
-# Eclipse m2e generated files
-# Eclipse Core
+### Eclipse m2e generated files ###
 .project
-# JDT-specific (Eclipse Java Development Tools)
 .classpath
-
-# Database files
-data/
-*.mv.db
-*.trace.db
