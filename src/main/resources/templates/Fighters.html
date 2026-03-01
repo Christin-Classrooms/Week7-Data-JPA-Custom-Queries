@@ -11,7 +11,70 @@
 <div class="app-container">
     <div class="app-header text-center">
         <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
+        <p class="text-muted">
+            Showing <span th:text="${totalElements}">0</span> fighters
+        </p>
+    </div>
+
+    <div class="players-card mb-3">
+        <div class="p-3">
+            <form th:action="@{/fighters}" method="get" class="row g-2 align-items-center">
+
+                <div class="col-md-4">
+                    <input type="text"
+                           class="form-control"
+                           name="search"
+                           placeholder="Search fighters by name..."
+                           th:value="${search}">
+                </div>
+
+                <div class="col-md-3">
+                    <select class="form-select" name="filterType">
+                        <option value="all" th:selected="${filterType == 'all'}">All</option>
+                        <option value="name" th:selected="${filterType == 'name'}">By Name</option>
+                        <option value="health" th:selected="${filterType == 'health'}">Health Greater Than</option>
+                        <option value="strongest" th:selected="${filterType == 'strongest'}">Strongest</option>
+                        <option value="balanced" th:selected="${filterType == 'balanced'}">Balanced</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number"
+                           class="form-control"
+                           name="healthMin"
+                           placeholder="Health >"
+                           th:value="${healthMin}">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number"
+                           step="0.01"
+                           class="form-control"
+                           name="minHealth"
+                           placeholder="Min Health"
+                           th:value="${minHealth}">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="number"
+                           step="0.01"
+                           class="form-control"
+                           name="maxDamage"
+                           placeholder="Max Damage"
+                           th:value="${maxDamage}">
+                </div>
+
+                <input type="hidden" name="sort" th:value="${sort}">
+                <input type="hidden" name="direction" th:value="${direction}">
+                <input type="hidden" name="page" value="0">
+                <input type="hidden" name="size" th:value="${pageSize}">
+
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    <a th:href="@{/fighters}" class="btn btn-outline-secondary w-100">Clear</a>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="players-card">
@@ -20,16 +83,81 @@
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
+
+                    <th scope="col">
+                        <a th:href="@{/fighters(
+                            page=${currentPage},
+                            size=${pageSize},
+                            sort='name',
+                            direction=${sort == 'name' ? (direction == 'ASC' ? 'DESC' : 'ASC') : 'ASC'},
+                            search=${search},
+                            filterType=${filterType},
+                            healthMin=${healthMin},
+                            minHealth=${minHealth},
+                            maxDamage=${maxDamage}
+                        )}">
+                            Name
+                            <span th:if="${sort == 'name'}" th:text="${direction == 'ASC' ? '↑' : '↓'}"></span>
+                        </a>
+                    </th>
+
+                    <th scope="col">
+                        <a th:href="@{/fighters(
+                            page=${currentPage},
+                            size=${pageSize},
+                            sort='health',
+                            direction=${sort == 'health' ? (direction == 'ASC' ? 'DESC' : 'ASC') : 'ASC'},
+                            search=${search},
+                            filterType=${filterType},
+                            healthMin=${healthMin},
+                            minHealth=${minHealth},
+                            maxDamage=${maxDamage}
+                        )}">
+                            Health
+                            <span th:if="${sort == 'health'}" th:text="${direction == 'ASC' ? '↑' : '↓'}"></span>
+                        </a>
+                    </th>
+
+                    <th scope="col">
+                        <a th:href="@{/fighters(
+                            page=${currentPage},
+                            size=${pageSize},
+                            sort='damage',
+                            direction=${sort == 'damage' ? (direction == 'ASC' ? 'DESC' : 'ASC') : 'ASC'},
+                            search=${search},
+                            filterType=${filterType},
+                            healthMin=${healthMin},
+                            minHealth=${minHealth},
+                            maxDamage=${maxDamage}
+                        )}">
+                            Damage
+                            <span th:if="${sort == 'damage'}" th:text="${direction == 'ASC' ? '↑' : '↓'}"></span>
+                        </a>
+                    </th>
+
+                    <th scope="col">
+                        <a th:href="@{/fighters(
+                            page=${currentPage},
+                            size=${pageSize},
+                            sort='resistance',
+                            direction=${sort == 'resistance' ? (direction == 'ASC' ? 'DESC' : 'ASC') : 'ASC'},
+                            search=${search},
+                            filterType=${filterType},
+                            healthMin=${healthMin},
+                            minHealth=${minHealth},
+                            maxDamage=${maxDamage}
+                        )}">
+                            Resistance
+                            <span th:if="${sort == 'resistance'}" th:text="${direction == 'ASC' ? '↑' : '↓'}"></span>
+                        </a>
+                    </th>
                 </tr>
                 </thead>
+
                 <tbody>
                 <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
+                    <th scope="row" th:text="${itr.count + (currentPage * pageSize)}">1</th>
+                    <td th:text="${fighter.name}">Name of Fighter</td>
                     <td th:text="${fighter.health}">1000</td>
                     <td th:text="${fighter.damage}">50.0</td>
                     <td th:text="${fighter.resistance}">5.0</td>
@@ -39,8 +167,81 @@
         </div>
     </div>
 
+    <div class="mt-3 d-flex justify-content-between align-items-center">
+        <div>
+            <span th:text="'Page ' + (${currentPage} + 1) + ' of ' + ${totalPages}">Page 1 of 1</span>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a class="btn btn-outline-secondary"
+               th:classappend="${totalPages == 0} ? ' disabled' : ''"
+               th:href="@{/fighters(
+                    page=0,
+                    size=${pageSize},
+                    sort=${sort},
+                    direction=${direction},
+                    search=${search},
+                    filterType=${filterType},
+                    healthMin=${healthMin},
+                    minHealth=${minHealth},
+                    maxDamage=${maxDamage}
+               )}">
+                First
+            </a>
+
+            <a class="btn btn-outline-secondary"
+               th:classappend="${!hasPrevious} ? ' disabled' : ''"
+               th:href="@{/fighters(
+                    page=${currentPage - 1},
+                    size=${pageSize},
+                    sort=${sort},
+                    direction=${direction},
+                    search=${search},
+                    filterType=${filterType},
+                    healthMin=${healthMin},
+                    minHealth=${minHealth},
+                    maxDamage=${maxDamage}
+               )}">
+                Previous
+            </a>
+
+            <a class="btn btn-outline-secondary"
+               th:classappend="${!hasNext} ? ' disabled' : ''"
+               th:href="@{/fighters(
+                    page=${currentPage + 1},
+                    size=${pageSize},
+                    sort=${sort},
+                    direction=${direction},
+                    search=${search},
+                    filterType=${filterType},
+                    healthMin=${healthMin},
+                    minHealth=${minHealth},
+                    maxDamage=${maxDamage}
+               )}">
+                Next
+            </a>
+
+            <a class="btn btn-outline-secondary"
+               th:classappend="${totalPages == 0} ? ' disabled' : ''"
+               th:href="@{/fighters(
+                    page=${totalPages - 1},
+                    size=${pageSize},
+                    sort=${sort},
+                    direction=${direction},
+                    search=${search},
+                    filterType=${filterType},
+                    healthMin=${healthMin},
+                    minHealth=${minHealth},
+                    maxDamage=${maxDamage}
+               )}">
+                Last
+            </a>
+        </div>
+    </div>
+
     <div class="mt-3">
-        <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
+        <a href="/create-fighter" class="btn btn-primary">Register a New Fighter</a>
     </div>
 </div>
 
