@@ -1,49 +1,137 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Fighters</title>
-    <div th:insert="fragments/base :: assetsHead"></div>
+    <meta charset="UTF-8"/>
 </head>
 <body>
-<nav th:replace="fragments/navbar :: navbar"></nav>
 
-<div class="app-container">
-    <div class="app-header text-center">
-        <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
+<h2>Fighters</h2>
+
+<!--  Filter Form -->
+<form th:action="@{/fighters}" method="get" style="margin-bottom: 16px;">
+    <label>Filter:</label>
+    <select name="filterType">
+        <option value="" th:selected="${filterType == null or filterType == ''}">None</option>
+        <option value="name" th:selected="${filterType == 'name'}">Name contains</option>
+        <option value="health" th:selected="${filterType == 'health'}">Health greater than</option>
+        <option value="strongest" th:selected="${filterType == 'strongest'}">Strongest (damage desc)</option>
+        <option value="balanced" th:selected="${filterType == 'balanced'}">Balanced (health & damage)</option>
+    </select>
+
+    <!-- keep paging/sorting -->
+    <input type="hidden" name="page" value="0"/>
+    <input type="hidden" name="size" th:value="${size}"/>
+    <input type="hidden" name="sort" th:value="${sort}"/>
+    <input type="hidden" name="direction" th:value="${direction}"/>
+
+    <div style="margin-top: 10px;">
+        <label>Name:</label>
+        <input type="text" name="name" th:value="${name}"/>
+
+        <label style="margin-left: 12px;">Min Health:</label>
+        <input type="number" name="minHealth" th:value="${minHealth}"/>
+
+        <br/><br/>
+
+        <label>Balanced Min Health:</label>
+        <input type="number" step="0.1" name="minHealthBalanced" th:value="${minHealthBalanced}"/>
+
+        <label style="margin-left: 12px;">Balanced Max Damage:</label>
+        <input type="number" step="0.1" name="maxDamageBalanced" th:value="${maxDamageBalanced}"/>
+
+        <button type="submit" style="margin-left: 12px;">Apply</button>
+        <a th:href="@{/fighters}">Reset</a>
     </div>
+</form>
 
-    <div class="players-card">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
-                    <td th:text="${fighter.health}">1000</td>
-                    <td th:text="${fighter.damage}">50.0</td>
-                    <td th:text="${fighter.resistance}">5.0</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<!--  Sorting controls -->
+<form th:action="@{/fighters}" method="get" style="margin-bottom: 16px;">
+    <label>Sort by:</label>
+    <select name="sort">
+        <option value="id" th:selected="${sort == 'id'}">ID</option>
+        <option value="name" th:selected="${sort == 'name'}">Name</option>
+        <option value="health" th:selected="${sort == 'health'}">Health</option>
+        <option value="damage" th:selected="${sort == 'damage'}">Damage</option>
+        <option value="resistance" th:selected="${sort == 'resistance'}">Resistance</option>
+    </select>
 
-    <div class="mt-3">
-        <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
+    <select name="direction">
+        <option value="asc" th:selected="${direction == 'asc'}">ASC</option>
+        <option value="desc" th:selected="${direction == 'desc'}">DESC</option>
+    </select>
+
+    <!-- keep filters -->
+    <input type="hidden" name="filterType" th:value="${filterType}"/>
+    <input type="hidden" name="name" th:value="${name}"/>
+    <input type="hidden" name="minHealth" th:value="${minHealth}"/>
+    <input type="hidden" name="minHealthBalanced" th:value="${minHealthBalanced}"/>
+    <input type="hidden" name="maxDamageBalanced" th:value="${maxDamageBalanced}"/>
+
+    <!-- reset to first page when changing sort -->
+    <input type="hidden" name="page" value="0"/>
+    <input type="hidden" name="size" th:value="${size}"/>
+
+    <button type="submit">Sort</button>
+</form>
+
+<!--  Fighters Table -->
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Health</th>
+        <th>Damage</th>
+        <th>Resistance</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="f : ${fighters}">
+        <td th:text="${f.id}"></td>
+        <td th:text="${f.name}"></td>
+        <td th:text="${f.health}"></td>
+        <td th:text="${f.damage}"></td>
+        <td th:text="${f.resistance}"></td>
+        <td>
+            <a th:href="@{/fighters/delete(id=${f.id})}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p style="margin-top: 10px;">
+    Total Items: <span th:text="${totalItems}"></span>
+</p>
+
+<!--  Pagination -->
+<div style="margin-top: 12px;">
+    <span>Page <b th:text="${currentPage + 1}"></b> of <b th:text="${totalPages}"></b></span>
+
+    <div style="margin-top: 8px;">
+        <!-- Prev -->
+        <a th:if="${currentPage > 0}"
+           th:href="@{/fighters(page=${currentPage-1}, size=${size}, sort=${sort}, direction=${direction},
+                    filterType=${filterType}, name=${name}, minHealth=${minHealth},
+                    minHealthBalanced=${minHealthBalanced}, maxDamageBalanced=${maxDamageBalanced})}">
+            Prev
+        </a>
+
+        <!-- Next -->
+        <a th:if="${currentPage + 1 < totalPages}"
+           th:href="@{/fighters(page=${currentPage+1}, size=${size}, sort=${sort}, direction=${direction},
+                    filterType=${filterType}, name=${name}, minHealth=${minHealth},
+                    minHealthBalanced=${minHealthBalanced}, maxDamageBalanced=${maxDamageBalanced})}"
+           style="margin-left: 12px;">
+            Next
+        </a>
     </div>
 </div>
 
-<div th:insert="fragments/base :: assetsScripts"></div>
+<p style="margin-top: 16px;">
+    <a th:href="@{/fighters/create}">Create New Fighter</a>
+</p>
+
 </body>
 </html>
