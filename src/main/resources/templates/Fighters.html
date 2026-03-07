@@ -11,31 +11,162 @@
 <div class="app-container">
     <div class="app-header text-center">
         <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
+        <p class="text-muted">Showing <span th:text="${totalElements}"></span> fighters</p>
     </div>
 
     <div class="players-card">
+        <!-- search and filters -->
+        <div>
+            <form method="get" th:action="@{/fighters}" style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #e0e0e0; padding: 20px;">
+                <!-- Search/Filter Form -->
+                <input type="hidden" name="page" value="0" />
+                <input type="hidden" name="sort" th:value="${sort}" />
+                <input type="hidden" name="direction" th:value="${direction}" />
+                
+                <div class="form-group">
+                    <label for="search" style="font-weight: bold;">Search:</label>
+                    <input type="text" id="search" name="search" th:value="${search}" placeholder="Enter search term..." style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;"/>
+                </div>
+                
+                <div class="form-group">
+                    <label for="filterType" style="font-weight: bold;">Filter Type:</label>
+                    <select id="filterType" name="filterType" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="all" th:selected="${filterType == 'all'}">All Fighters</option>
+                        <option value="name" th:selected="${filterType == 'name'}">Name</option>
+                        <option value="health" th:selected="${filterType == 'health'}">Health</option>
+                        <option value="strongest" th:selected="${filterType == 'strongest'}">Strongest</option>
+                        <option value="balanced" th:selected="${filterType == 'balanced'}">Balanced</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <!-- Search Button -->
+                    <button type="submit" style="padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Search
+                    </button>
+
+                    <!-- Reset Button -->
+                    <a th:href="@{/fighters}" style="padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block;">
+                        Reset
+                    </a>
+                </div>
+            </form>
+         </div>
+        <!-- Table -->
         <div class="table-responsive">
             <table class="table align-middle">
                 <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
-                </tr>
+                    <tr>
+                        <!-- ID -->
+                        <th scope="col">ID</th>
+                        <!-- Name -->
+                        <th scope="col">
+                            <a th:href="@{/fighters(search=${search}, page=${currentPage}, size=${size}, sort='name', direction=${direction=='ASC'?'DESC':'ASC'})}"
+                            style="color: #333; text-decoration: none; cursor: pointer;">
+                                Name
+                                <span style="font-size: 12px; color: #999;" th:if="${sort == 'name'}">
+                                    <span th:if="${direction == 'ASC'}">▲</span>
+                                    <span th:if="${direction == 'DESC'}">▼</span>
+                                </span>                        
+                            </a>
+                        </th>
+                        <!-- Health -->
+                        <th scope="col">
+                            <a th:href="@{/fighters(search=${search}, page=${currentPage}, size=${size}, sort='health', direction=${direction=='ASC'?'DESC':'ASC'})}"
+                            style="color: #333; text-decoration: none; cursor: pointer;">
+                                Health
+                                <span style="font-size: 12px; color: #999;" th:if="${sort == 'health'}">
+                                    <span th:if="${direction == 'ASC'}">▲</span>
+                                    <span th:if="${direction == 'DESC'}">▼</span>
+                                </span>                        
+                            </a>
+                        </th>
+                        <!-- Damage -->
+                        <th scope="col">
+                            <a th:href="@{/fighters(search=${search}, page=${currentPage}, size=${size}, sort='damage', direction=${direction=='ASC'?'DESC':'ASC'})}"
+                            style="color: #333; text-decoration: none; cursor: pointer;">
+                                Damage
+                                <span style="font-size: 12px; color: #999;" th:if="${sort == 'damage'}">
+                                    <span th:if="${direction == 'ASC'}">▲</span>
+                                    <span th:if="${direction == 'DESC'}">▼</span>
+                                </span>                        
+                            </a>
+                        </th>
+                        <!-- Resistance -->
+                        <th scope="col">
+                            <a th:href="@{/fighters(search=${search}, page=${currentPage}, size=${size}, sort='resistance', direction=${direction=='ASC'?'DESC':'ASC'})}"
+                            style="color: #333; text-decoration: none; cursor: pointer;">
+                                Resistance
+                                <span style="font-size: 12px; color: #999;" th:if="${sort == 'resistance'}">
+                                    <span th:if="${direction == 'ASC'}">▲</span>
+                                    <span th:if="${direction == 'DESC'}">▼</span>
+                                </span>                        
+                            </a>
+                        </th>
+                    </tr>
                 </thead>
+                <!-- formatting -->
                 <tbody>
-                <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
-                    <td th:text="${fighter.health}">1000</td>
-                    <td th:text="${fighter.damage}">50.0</td>
-                    <td th:text="${fighter.resistance}">5.0</td>
-                </tr>
+                    <tr th:each="fighter : ${fighters}">
+                        <th scope="row" th:text="${fighter.id}">1</th>
+                        <td th:text="${fighter.name}">Fighter Name</td>
+                        <td th:text="${fighter.health}">1000</td>
+                        <td th:text="${fighter.damage}">50.0</td>
+                        <td th:text="${fighter.resistance}">5.0</td>
+                    </tr>
+                    <tr th:if="${fighters.isEmpty()}" style="border-bottom: 1px solid #eee;">
+                        <td colspan="5" style="padding: 20px; text-align: center; color: #999;">No fighters found</td>
+                    </tr>                
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination Footer -->
+        <div style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #666;">
+            <span id="showing-info">Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+
+            <!-- Pagination Controls -->
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <!-- First Page -->
+                <a th:if="${currentPage > 0}" th:href="@{/fighters(search=${search}, page=0, size=${size}, sort=${sort}, direction=${direction})}"
+                   style="padding: 6px 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 12px; text-decoration: none; color: #333; cursor: pointer;">
+                    « First
+                </a>
+                <span th:if="${currentPage == 0}" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 4px; font-size: 12px; color: #999;">
+                    « First
+                </span>
+
+                <!-- Previous Page -->
+                <a th:if="${hasPrevious}" th:href="@{/fighters(search=${search}, page=${currentPage - 1}, size=${size}, sort=${sort}, direction=${direction})}"
+                   style="padding: 6px 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 12px; text-decoration: none; color: #333; cursor: pointer;">
+                    ‹ Prev
+                </a>
+                <span th:if="${!hasPrevious}" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 4px; font-size: 12px; color: #999;">
+                    ‹ Prev
+                </span>
+
+                <!-- Page Numbers -->
+                <span style="padding: 6px 10px; font-size: 12px;">
+                    Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">5</span>
+                </span>
+
+                <!-- Next Page -->
+                <a th:if="${hasNext}" th:href="@{/fighters(search=${search}, page=${currentPage + 1}, size=${size}, sort=${sort}, direction=${direction})}"
+                   style="padding: 6px 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 12px; text-decoration: none; color: #333; cursor: pointer;">
+                    Next ›
+                </a>
+                <span th:if="${!hasNext}" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 4px; font-size: 12px; color: #999;">
+                    Next ›
+                </span>
+
+                <!-- Last Page -->
+                <a th:if="${currentPage < totalPages - 1}" th:href="@{/fighters(search=${search}, page=${totalPages - 1}, size=${size}, sort=${sort}, direction=${direction})}"
+                   style="padding: 6px 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 12px; text-decoration: none; color: #333; cursor: pointer;">
+                    Last »
+                </a>
+                <span th:if="${currentPage >= totalPages - 1}" style="padding: 6px 10px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 4px; font-size: 12px; color: #999;">
+                    Last »
+                </span>
+            </div>
         </div>
     </div>
 
