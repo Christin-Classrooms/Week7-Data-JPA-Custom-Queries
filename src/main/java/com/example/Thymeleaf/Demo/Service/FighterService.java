@@ -2,10 +2,9 @@ package com.example.Thymeleaf.Demo.Service;
 
 import com.example.Thymeleaf.Demo.Model.Fighter;
 import com.example.Thymeleaf.Demo.repository.FighterRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FighterService {
@@ -16,28 +15,33 @@ public class FighterService {
         this.fighterRepository = fighterRepository;
     }
 
-    public List<Fighter> getAllFighters() {
-        return fighterRepository.findAll();
+    // Search by name (case-insensitive, contains)
+    public Page<Fighter> findByName(String name, Pageable pageable) {
+        return fighterRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
-    public void addFighter(Fighter fighter) {
-        fighterRepository.save(fighter);
+    // Search by health greater than
+    public Page<Fighter> findByHealthGreaterThan(int health, Pageable pageable) {
+        return fighterRepository.findByHealthGreaterThan(health, pageable);
     }
 
-    public Optional<Fighter> getFighterById(int id) {
-        return fighterRepository.findById(id);
+    // Get strongest fighters (sorted by damage descending)
+    public Page<Fighter> findStrongest(Pageable pageable) {
+        return fighterRepository.findStrongestFighters(pageable);
     }
 
-    public void deleteFighter(int id) {
-        fighterRepository.deleteById(id);
+    // Get balanced fighters (health >= minHealth, damage <= maxDamage, sorted by resistance descending)
+    public Page<Fighter> findBalanced(double minHealth, double maxDamage, Pageable pageable) {
+        return fighterRepository.findBalancedFighters(minHealth, maxDamage, pageable);
     }
 
-    public boolean existsFighter(int id) {
-        return fighterRepository.existsById(id);
+    // Get all fighters with pagination and sorting
+    public Page<Fighter> findAll(Pageable pageable) {
+        return fighterRepository.findAll(pageable);
     }
 
-    public long countFighters() {
-        return fighterRepository.count();
+    // Save a new fighter (needed for CreateFighterController)
+    public Fighter addFighter(Fighter fighter) {
+        return fighterRepository.save(fighter);
     }
-
 }
