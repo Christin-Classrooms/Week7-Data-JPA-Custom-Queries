@@ -9,4 +9,5 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface FighterRepository extends JpaRepository<Fighter, Integer> {
 Page<Fighter> findByNameContainingIgnoreCase(String name, Pageable pageable);
+Page<Fighter> findByHealthGreaterThan(int health, Pageable pageable);
 }
