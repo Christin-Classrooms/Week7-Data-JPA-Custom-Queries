@@ -11,9 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 public class PlayersController {
 
@@ -57,7 +54,6 @@ public class PlayersController {
         model.addAttribute("search", search);
         model.addAttribute("sort", sortBy);
         model.addAttribute("direction", direction);
-        //Switching the Pagination
         model.addAttribute("hasPrevious", playerPage.hasPrevious());
         model.addAttribute("hasNext", playerPage.hasNext());
         model.addAttribute("startIndex", page * size +1);

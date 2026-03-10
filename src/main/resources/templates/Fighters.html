@@ -11,7 +11,28 @@
 <div class="app-container">
     <div class="app-header text-center">
         <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
+        <p class="text-muted">Showing <span th:text="${totalElements}">0</span> fighters</p>
+    </div>
+
+    <div class="card mb-4 p-3">
+        <form th:action="@{/fighters}" method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" th:value="${search}" class="form-control" placeholder="Search..."> [cite: 43]
+            </div>
+            <div class="col-md-3">
+                <select name="filterType" class="form-control"> [cite: 44]
+                    <option value="all" th:selected="${filterType == 'all'}">All</option>
+                    <option value="name" th:selected="${filterType == 'name'}">By Name</option>
+                    <option value="health" th:selected="${filterType == 'health'}">By Health</option>
+                    <option value="strongest" th:selected="${filterType == 'strongest'}">Strongest</option>
+                    <option value="balanced" th:selected="${filterType == 'balanced'}">Balanced</option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <button type="submit" class="btn btn-primary">Search</button> [cite: 45]
+                <a th:href="@{/fighters}" class="btn btn-secondary">Clear</a> [cite: 45]
+            </div>
+        </form>
     </div>
 
     <div class="players-card">
@@ -20,15 +41,31 @@
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
+                    <th scope="col">
+                        <a th:href="@{/fighters(sort='name', direction=${sort == 'name' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Name <span th:text="${sort == 'name' ? (direction == 'ASC' ? '↑' : '↓') : ''}"></span> [cite: 48, 49]
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/fighters(sort='health', direction=${sort == 'health' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Health <span th:text="${sort == 'health' ? (direction == 'ASC' ? '↑' : '↓') : ''}"></span> 
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/fighters(sort='damage', direction=${sort == 'damage' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Damage <span th:text="${sort == 'damage' ? (direction == 'ASC' ? '↑' : '↓') : ''}"></span> 
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/fighters(sort='resistance', direction=${sort == 'resistance' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Resistance <span th:text="${sort == 'resistance' ? (direction == 'ASC' ? '↑' : '↓') : ''}"></span> 
+                        </a>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
+                    <th scope="row" th:text="${currentPage * pageSize + itr.count}">1</th>
                     <td th:text="${fighter.name}">Fighter Name</td>
                     <td th:text="${fighter.health}">1000</td>
                     <td th:text="${fighter.damage}">50.0</td>
@@ -38,6 +75,26 @@
             </table>
         </div>
     </div>
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{/fighters(page=0, sort=${sort}, direction=${direction}, search=${search}, filterType=${filterType})}">First</a> [cite: 51]
+            </li>
+            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+                <a class="page-link" th:href="@{/fighters(page=${currentPage - 1}, sort=${sort}, direction=${direction}, search=${search}, filterType=${filterType})}">Previous</a> [cite: 51]
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span></span> [cite: 52]
+            </li>
+            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{/fighters(page=${currentPage + 1}, sort=${sort}, direction=${direction}, search=${search}, filterType=${filterType})}">Next</a> [cite: 51]
+            </li>
+            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{/fighters(page=${totalPages - 1}, sort=${sort}, direction=${direction}, search=${search}, filterType=${filterType})}">Last</a> [cite: 51]
+            </li>
+        </ul>
+    </nav>
 
     <div class="mt-3">
         <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
