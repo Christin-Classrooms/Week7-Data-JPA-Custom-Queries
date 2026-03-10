@@ -1,49 +1,179 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Fighters</title>
     <div th:insert="fragments/base :: assetsHead"></div>
 </head>
+
 <body>
+
 <nav th:replace="fragments/navbar :: navbar"></nav>
 
 <div class="app-container">
+
     <div class="app-header text-center">
         <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
+        <p class="text-muted">
+            Showing <span th:text="${totalElements}">0</span> fighters
+        </p>
     </div>
+
+    <div class="players-card mb-3">
+        <form th:action="@{/fighters}" method="get" class="row g-2">
+
+            <div class="col-md-4">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search name or health value"
+                       th:value="${search}">
+            </div>
+
+            <div class="col-md-3">
+                <select name="filterType" class="form-select">
+
+                    <option value="all"
+                            th:selected="${filterType == 'all'}">
+                        All Fighters
+                    </option>
+
+                    <option value="name"
+                            th:selected="${filterType == 'name'}">
+                        Filter by Name
+                    </option>
+
+                    <option value="health"
+                            th:selected="${filterType == 'health'}">
+                        Filter by Health
+                    </option>
+
+                    <option value="strongest"
+                            th:selected="${filterType == 'strongest'}">
+                        Strongest Fighters
+                    </option>
+
+                    <option value="balanced"
+                            th:selected="${filterType == 'balanced'}">
+                        Balanced Fighters
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">
+                    Search
+                </button>
+            </div>
+
+            <div class="col-md-2">
+                <a th:href="@{/fighters}" class="btn btn-secondary w-100">
+                    Clear
+                </a>
+            </div>
+
+        </form>
+    </div>
+
 
     <div class="players-card">
         <div class="table-responsive">
+
             <table class="table align-middle">
+
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
+
+                    <th>#</th>
+
+                    <th>
+                        <a th:href="@{/fighters(page=${currentPage},size=${pageSize},sort='name',direction=${direction == 'ASC' ? 'DESC':'ASC'},search=${search},filterType=${filterType})}">
+                            Name
+                        </a>
+                    </th>
+
+                    <th>
+                        <a th:href="@{/fighters(page=${currentPage},size=${pageSize},sort='health',direction=${direction == 'ASC' ? 'DESC':'ASC'},search=${search},filterType=${filterType})}">
+                            Health
+                        </a>
+                    </th>
+
+                    <th>
+                        <a th:href="@{/fighters(page=${currentPage},size=${pageSize},sort='damage',direction=${direction == 'ASC' ? 'DESC':'ASC'},search=${search},filterType=${filterType})}">
+                            Damage
+                        </a>
+                    </th>
+
+                    <th>
+                        <a th:href="@{/fighters(page=${currentPage},size=${pageSize},sort='resistance',direction=${direction == 'ASC' ? 'DESC':'ASC'},search=${search},filterType=${filterType})}">
+                            Resistance
+                        </a>
+                    </th>
+
                 </tr>
                 </thead>
+
+
                 <tbody>
-                <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
+
+                <tr th:each="fighter, itr : ${fighters}">
+
+                    <th th:text="${itr.count}">1</th>
+
+                    <td th:text="${fighter.name}">Name</td>
+
                     <td th:text="${fighter.health}">1000</td>
-                    <td th:text="${fighter.damage}">50.0</td>
-                    <td th:text="${fighter.resistance}">5.0</td>
+
+                    <td th:text="${fighter.damage}">50</td>
+
+                    <td th:text="${fighter.resistance}">5</td>
+
                 </tr>
+
                 </tbody>
+
             </table>
+
         </div>
     </div>
 
-    <div class="mt-3">
-        <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
+
+    <div class="mt-3 text-center">
+
+        <span th:text="'Page ' + (${currentPage}+1) + ' of ' + ${totalPages}">
+            Page 1 of 1
+        </span>
+
+        <div class="mt-2">
+
+            <a th:if="${hasPrevious}"
+               th:href="@{/fighters(page=${currentPage-1},size=${pageSize},sort=${sort},direction=${direction},search=${search},filterType=${filterType})}"
+               class="btn btn-outline-primary btn-sm">
+                Previous
+            </a>
+
+            <a th:if="${hasNext}"
+               th:href="@{/fighters(page=${currentPage+1},size=${pageSize},sort=${sort},direction=${direction},search=${search},filterType=${filterType})}"
+               class="btn btn-outline-primary btn-sm">
+                Next
+            </a>
+
+        </div>
+
     </div>
+
+
+    <div class="mt-3">
+        <a href="/create-fighter" class="btn btn-primary">
+            Register New Fighter
+        </a>
+    </div>
+
 </div>
 
 <div th:insert="fragments/base :: assetsScripts"></div>
+
 </body>
 </html>
