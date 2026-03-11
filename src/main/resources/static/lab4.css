@@ -1,0 +1,114 @@
+body, h1, h2, h3, p, a, button, input, select, table, th, td {
+    font-family: 'Orbitron', sans-serif !important;
+}
+
+body {
+    background-image: url('/gaming.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: -1;
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+    color: #ff4b5c;
+    text-shadow: 0 0 10px #ff4b5c, 0 0 20px #ff4b5c, 0 0 30px #ff4b5c;
+    margin-bottom: 30px;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+form input,
+form select {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+form input::placeholder {
+    color: #ccc;
+}
+
+form button {
+    background: #ff4b5c;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover {
+    background: #ff2a3d;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background: #ff4b5c;
+}
+
+thead th {
+    padding: 14px;
+    text-align: center;
+}
+
+thead a {
+    color: white;
+    text-decoration: none;
+}
+
+tbody td {
+    padding: 12px;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background: rgba(255,255,255,0.05);
+}
+
+tbody tr:hover {
+    background: rgba(255,75,92,0.15);
+}
+
+.mt-3 {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.mt-3 a {
+    margin: 0 10px;
+    color: #ff4b5c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mt-3 a:hover {
+    text-decoration: underline;
+}
