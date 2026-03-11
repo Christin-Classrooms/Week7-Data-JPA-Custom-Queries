@@ -1,11 +1,12 @@
 package com.example.Thymeleaf.Demo.Service;
 
-import com.example.Thymeleaf.Demo.Model.Fighter;
-import com.example.Thymeleaf.Demo.repository.FighterRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.Thymeleaf.Demo.Model.Fighter;
+import com.example.Thymeleaf.Demo.repository.FighterRepository;
 
 @Service
 public class FighterService {
@@ -24,20 +25,15 @@ public class FighterService {
         fighterRepository.save(fighter);
     }
 
-    public Optional<Fighter> getFighterById(int id) {
+    public Optional<Fighter> getFighterById(Long id) {
         return fighterRepository.findById(id);
     }
 
-    public void deleteFighter(int id) {
+    public void deleteFighter(Long id) {
         fighterRepository.deleteById(id);
     }
 
-    public boolean existsFighter(int id) {
+    public boolean existsFighter(Long id) {
         return fighterRepository.existsById(id);
     }
-
-    public long countFighters() {
-        return fighterRepository.count();
-    }
-
 }
