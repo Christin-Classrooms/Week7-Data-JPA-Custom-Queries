@@ -6,7 +6,7 @@ body{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
 .app-container{
-    max-width:960px;
+    max-width:1280px;
     margin:40px auto;
 }
 .app-header{
