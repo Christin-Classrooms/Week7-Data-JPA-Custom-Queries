@@ -6,21 +6,29 @@
 
 <div class="app-container">
     <div class="app-header">
-        <h2 class="mb-4">Register a Fighter</h2>
+        <!-- Title changes based on create vs edit -->
+        <h2 class="mb-4" th:text="${fighter.id != 0} ? 'Edit Fighter' : 'Register a Fighter'">Register a Fighter</h2>
     </div>
 
     <div class="players-card">
-        <form th:action="@{/create-fighter}" th:object="${fighter}" method="POST" novalidate>
+        <!--
+            If fighter already has an id → POST to /fighters/{id}/edit
+            Otherwise → POST to /create-fighter (original create route)
+        -->
+        <form th:action="${fighter.id != 0} ? @{/fighters/{id}/edit(id=${fighter.id})} : @{/create-fighter}"
+              th:object="${fighter}"
+              method="POST"
+              novalidate>
 
             <div class="mb-3">
                 <label for="name" class="form-label">Fighter Name <span class="text-danger">*</span></label>
                 <input
-                    type="text"
-                    class="form-control"
-                    id="name"
-                    th:field="*{name}"
-                    th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : '' }"
-                    required
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        th:field="*{name}"
+                        th:classappend="${#fields.hasErrors('name') ? 'is-invalid' : ''}"
+                        required
                 >
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
                     Name Error.
@@ -30,14 +38,14 @@
             <div class="mb-3">
                 <label for="health" class="form-label">Health (1001-1499) <span class="text-danger">*</span></label>
                 <input
-                    type="number"
-                    class="form-control"
-                    id="health"
-                    th:field="*{health}"
-                    th:classappend="${#fields.hasErrors('health') ? 'is-invalid' : '' }"
-                    min="1001"
-                    max="1499"
-                    required
+                        type="number"
+                        class="form-control"
+                        id="health"
+                        th:field="*{health}"
+                        th:classappend="${#fields.hasErrors('health') ? 'is-invalid' : ''}"
+                        min="1001"
+                        max="1499"
+                        required
                 >
                 <small class="form-text text-muted">Must be greater than 1000 and less than 1500</small>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('health')}" th:errors="*{health}">
@@ -48,15 +56,15 @@
             <div class="mb-3">
                 <label for="damage" class="form-label">Damage (0-99.99) <span class="text-danger">*</span></label>
                 <input
-                    type="number"
-                    class="form-control"
-                    id="damage"
-                    th:field="*{damage}"
-                    th:classappend="${#fields.hasErrors('damage') ? 'is-invalid' : '' }"
-                    min="0"
-                    max="99.99"
-                    step="0.01"
-                    required
+                        type="number"
+                        class="form-control"
+                        id="damage"
+                        th:field="*{damage}"
+                        th:classappend="${#fields.hasErrors('damage') ? 'is-invalid' : ''}"
+                        min="0"
+                        max="99.99"
+                        step="0.01"
+                        required
                 >
                 <small class="form-text text-muted">Must be less than 100</small>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('damage')}" th:errors="*{damage}">
@@ -67,15 +75,15 @@
             <div class="mb-3">
                 <label for="resistance" class="form-label">Resistance (0-10) <span class="text-danger">*</span></label>
                 <input
-                    type="number"
-                    class="form-control"
-                    id="resistance"
-                    th:field="*{resistance}"
-                    th:classappend="${#fields.hasErrors('resistance') ? 'is-invalid' : '' }"
-                    min="0"
-                    max="10"
-                    step="0.01"
-                    required
+                        type="number"
+                        class="form-control"
+                        id="resistance"
+                        th:field="*{resistance}"
+                        th:classappend="${#fields.hasErrors('resistance') ? 'is-invalid' : ''}"
+                        min="0"
+                        max="10"
+                        step="0.01"
+                        required
                 >
                 <small class="form-text text-muted">Must be between 0 and 10 (decimal allowed)</small>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('resistance')}" th:errors="*{resistance}">
@@ -83,7 +91,13 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg">Register Fighter</button>
+            <!-- Button label changes based on create vs edit -->
+            <button type="submit" class="btn btn-primary btn-lg"
+                    th:text="${fighter.id != 0} ? 'Update Fighter' : 'Register Fighter'">
+                Register Fighter
+            </button>
+
+            <a th:href="@{/fighters}" class="btn btn-secondary btn-lg ms-2">Cancel</a>
         </form>
     </div>
 </div>
