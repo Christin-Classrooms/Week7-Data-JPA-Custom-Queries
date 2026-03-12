@@ -2,42 +2,35 @@ package com.example.Thymeleaf.Demo.Service;
 
 import com.example.Thymeleaf.Demo.Model.Fighter;
 import com.example.Thymeleaf.Demo.repository.FighterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FighterService {
 
-    private final FighterRepository fighterRepository;
-
-    public FighterService(FighterRepository fighterRepository) {
-        this.fighterRepository = fighterRepository;
-    }
-
-    public List<Fighter> getAllFighters() {
-        return fighterRepository.findAll();
-    }
+    @Autowired
+    private FighterRepository fighterRepository;
 
     public void addFighter(Fighter fighter) {
         fighterRepository.save(fighter);
     }
 
-    public Optional<Fighter> getFighterById(int id) {
-        return fighterRepository.findById(id);
-    }
+    public Page<Fighter> getFighters(String filterType, String search, Pageable pageable) {
+        if (search != null && !search.isEmpty()) {
+            if ("health".equals(filterType)) {
+                return fighterRepository.findByHealthGreaterThan(Integer.parseInt(search), pageable);
+            }
+            if ("name".equals(filterType)) {
+                return fighterRepository.findByNameContainingIgnoreCase(search, pageable);
+            }
+        }
 
-    public void deleteFighter(int id) {
-        fighterRepository.deleteById(id);
+        return switch (filterType) {
+            case "strongest" -> fighterRepository.findStrongestFighters(pageable);
+            case "balanced" -> fighterRepository.findBalancedFighters(1100.0, 90.0, pageable);
+            default -> fighterRepository.findAll(pageable);
+        };
     }
-
-    public boolean existsFighter(int id) {
-        return fighterRepository.existsById(id);
-    }
-
-    public long countFighters() {
-        return fighterRepository.count();
-    }
-
 }
