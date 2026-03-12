@@ -43,13 +43,8 @@ public class FighterController {
                 break;
 
             case "health":
-                int healthValue = 0;
-                try {
-                    if (search != null && !search.isBlank()) {
-                        healthValue = Integer.parseInt(search);
-                    }
-                } catch (NumberFormatException ignored) {}
-                fighterPage = fighterService.getHighHealthFighters(healthValue, pageable);
+                int healthThreshold = 1200;
+                fighterPage = fighterService.getHighHealthFighters(healthThreshold, pageable);
                 break;
 
             case "strongest":
