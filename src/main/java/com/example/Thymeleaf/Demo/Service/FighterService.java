@@ -1,11 +1,13 @@
 package com.example.Thymeleaf.Demo.Service;
 
-import com.example.Thymeleaf.Demo.Model.Fighter;
-import com.example.Thymeleaf.Demo.repository.FighterRepository;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.Thymeleaf.Demo.Model.Fighter;
+import com.example.Thymeleaf.Demo.repository.FighterRepository;
 
 @Service
 public class FighterService {
@@ -16,28 +18,38 @@ public class FighterService {
         this.fighterRepository = fighterRepository;
     }
 
+    public Fighter addFighter(Fighter fighter) {
+        return fighterRepository.save(fighter);
+    }
+
+    // Get all fighters (used in older controller)
     public List<Fighter> getAllFighters() {
         return fighterRepository.findAll();
     }
 
-    public void addFighter(Fighter fighter) {
-        fighterRepository.save(fighter);
+    // Pagination version of getting all fighters
+    public Page<Fighter> getAllFightersPageable(Pageable pageable) {
+        return fighterRepository.findAll(pageable);
     }
 
-    public Optional<Fighter> getFighterById(int id) {
-        return fighterRepository.findById(id);
+    // Search fighters by name (case insensitive)
+    public Page<Fighter> findByName(String name, Pageable pageable) {
+        return fighterRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
-    public void deleteFighter(int id) {
-        fighterRepository.deleteById(id);
+    // Fighters with health greater than a given value
+    public Page<Fighter> findByHealthGreaterThan(int health, Pageable pageable) {
+        return fighterRepository.findByHealthGreaterThan(health, pageable);
     }
 
-    public boolean existsFighter(int id) {
-        return fighterRepository.existsById(id);
+    // Strongest fighters ordered by damage
+    public Page<Fighter> findStrongest(Pageable pageable) {
+        return fighterRepository.findStrongestFighters(pageable);
     }
 
-    public long countFighters() {
-        return fighterRepository.count();
+    // Balanced fighters
+    public Page<Fighter> findBalanced(double minHealth, double maxDamage, Pageable pageable) {
+        return fighterRepository.findBalancedFighters(minHealth, maxDamage, pageable);
     }
 
 }
