@@ -35,3 +35,158 @@ body{
 .navbar-brand{
     font-weight:700;
 }
+/* Fighters Webpage Styling */
+.filter-section {
+    padding: 20px;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.form-filters {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.form-group-full {
+    flex: 1;
+}
+
+.form-group-min-width {
+    min-width: 180px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+}
+
+.btn-search {
+    padding: 8px 16px;
+    background-color: #0276f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-clear {
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.fighters-table {
+    margin-bottom: 0;
+}
+
+.table-head {
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #dfdfdf;
+}
+
+.table-header {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333333;
+}
+
+.table-header a {
+    color: #333333;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.sort-indicator {
+    font-size: 12px;
+    color: #909090;
+}
+
+.table-row {
+    border-bottom: 1px solid #eeeeee;
+    transition: background-color 0.2s;
+}
+
+.table-row th {
+    padding: 15px;
+}
+
+.table-cell {
+    padding: 15px;
+    color: #666666;
+}
+
+.table-cell-name {
+    padding: 15px;
+    color: #333333;
+}
+
+.table-empty-row {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.table-empty-cell {
+    padding: 20px;
+    text-align: center;
+    color: #909090;
+}
+
+.pagination-container {
+    padding: 15px 20px;
+    border-top: 1px solid #dfdfdf;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: #636363;
+}
+
+.pagination-link {
+    padding: 6px 10px;
+    border: 1px solid #dfdfdf;
+    background: white;
+    border-radius: 4px;
+    font-size: 12px;
+    text-decoration: none;
+    color: #373737;
+    cursor: pointer;
+}
+
+.pagination-link-disabled {
+    padding: 6px 10px;
+    border: 1px solid #dfdfdf;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #909090;
+}
+
+.pagination-label {
+    padding: 6px 10px;
+    font-size: 12px;
+}

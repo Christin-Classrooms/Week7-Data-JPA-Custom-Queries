@@ -11,31 +11,143 @@
 <div class="app-container">
     <div class="app-header text-center">
         <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
+        <p class="text-muted">Total: <span th:text="${totalElements}">0</span> fighters</p>
     </div>
 
     <div class="players-card">
+        <!-- Search and Filter Section -->
+        <div class="filter-section">
+            <!-- Search Section -->
+            <form method="get" th:action="@{/fighters}" class="form-filters">
+                <div class="form-group-full">
+                    <label for="search-input" class="form-label">Search by Name</label>
+                    <input type="text" id="search-input" name="search" th:value="${search}" placeholder="Search by name"
+                           class="form-input">
+                </div>
+
+                <!-- Filter Section -->
+                <div class="form-group-min-width">
+                    <label for="filter-select" class="form-label">Filter Type</label>
+                    <select id="filter-select" name="filterType" class="form-select">
+                        <option value="" th:selected="${filterType == ''}">All Fighters</option>
+                        <option value="name" th:selected="${filterType == 'name'}">By Name</option>
+                        <option value="health" th:selected="${filterType == 'health'}">By Health (>1200)</option>
+                        <option value="strongest" th:selected="${filterType == 'strongest'}">Strongest</option>
+                        <option value="balanced" th:selected="${filterType == 'balanced'}">Balanced</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-search">
+                    Search
+                </button>
+
+                <a th:href="@{/fighters}" class="btn-clear">
+                    Clear
+                </a>
+            </form>
+        </div>
+
+        <!-- Table -->
         <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
+            <table class="table align-middle fighters-table">
+                <thead class="table-head">
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
+                    <th scope="col" class="table-header" style="width: 10%;">#</th>
+                    <th scope="col" class="table-header" style="width: 30%;">
+                        <a th:href="@{/fighters(page=0, size=${pageSize}, sort='name', direction=${sort == 'name' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Name
+                            <span class="sort-indicator" th:if="${sort == 'name'}">
+                                <span th:if="${direction == 'ASC'}">↑</span>
+                                <span th:if="${direction == 'DESC'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
+                    <th scope="col" class="table-header" style="width: 20%;">
+                        <a th:href="@{/fighters(page=0, size=${pageSize}, sort='health', direction=${sort == 'health' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Health
+                            <span class="sort-indicator" th:if="${sort == 'health'}">
+                                <span th:if="${direction == 'ASC'}">↑</span>
+                                <span th:if="${direction == 'DESC'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
+                    <th scope="col" class="table-header" style="width: 20%;">
+                        <a th:href="@{/fighters(page=0, size=${pageSize}, sort='damage', direction=${sort == 'damage' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Damage
+                            <span class="sort-indicator" th:if="${sort == 'damage'}">
+                                <span th:if="${direction == 'ASC'}">↑</span>
+                                <span th:if="${direction == 'DESC'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
+                    <th scope="col" class="table-header" style="width: 20%;">
+                        <a th:href="@{/fighters(page=0, size=${pageSize}, sort='resistance', direction=${sort == 'resistance' && direction == 'ASC' ? 'DESC' : 'ASC'}, search=${search}, filterType=${filterType})}">
+                            Resistance
+                            <span class="sort-indicator" th:if="${sort == 'resistance'}">
+                                <span th:if="${direction == 'ASC'}">↑</span>
+                                <span th:if="${direction == 'DESC'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="fighter,itr : ${fighters}">
+                <tr th:each="fighter,itr : ${fighters}" class="table-row">
                     <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
-                    <td th:text="${fighter.health}">1000</td>
-                    <td th:text="${fighter.damage}">50.0</td>
-                    <td th:text="${fighter.resistance}">5.0</td>
+                    <td class="table-cell-name" th:text="${fighter.name}">Fighter Name</td>
+                    <td class="table-cell" th:text="${fighter.health}">1000</td>
+                    <td class="table-cell" th:text="${fighter.damage}">50.0</td>
+                    <td class="table-cell" th:text="${fighter.resistance}">5.0</td>
+                </tr>
+                <tr th:if="${fighters.isEmpty()}" class="table-empty-row">
+                    <td colspan="5" class="table-empty-cell">No fighters found</td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="pagination-container">
+            <!-- First Page -->
+            <a th:if="${currentPage > 0}" th:href="@{/fighters(search=${search}, page=0, size=${pageSize}, sort=${sort}, direction=${direction}, filterType=${filterType})}"
+               class="pagination-link">
+                First
+            </a>
+            <span th:if="${currentPage == 0}" class="pagination-link-disabled">
+                First
+            </span>
+
+            <!-- Previous Page -->
+            <a th:if="${hasPrevious}" th:href="@{/fighters(search=${search}, page=${currentPage - 1}, size=${pageSize}, sort=${sort}, direction=${direction}, filterType=${filterType})}"
+               class="pagination-link">
+                Prev
+            </a>
+            <span th:if="${!hasPrevious}" class="pagination-link-disabled">
+                Prev
+            </span>
+
+            <!-- Page Numbers -->
+            <span class="pagination-label">
+                Page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">5</span>
+            </span>
+
+            <!-- Next Page -->
+            <a th:if="${hasNext}" th:href="@{/fighters(search=${search}, page=${currentPage + 1}, size=${pageSize}, sort=${sort}, direction=${direction}, filterType=${filterType})}"
+               class="pagination-link">
+                Next
+            </a>
+            <span th:if="${!hasNext}" class="pagination-link-disabled">
+                Next
+            </span>
+
+            <!-- Last Page -->
+            <a th:if="${currentPage < totalPages - 1}" th:href="@{/fighters(search=${search}, page=${totalPages - 1}, size=${pageSize}, sort=${sort}, direction=${direction}, filterType=${filterType})}"
+               class="pagination-link">
+                Last
+            </a>
+            <span th:if="${currentPage >= totalPages - 1}" class="pagination-link-disabled">
+                Last
+            </span>
         </div>
     </div>
 
