@@ -1,49 +1,127 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
     <title>Fighters</title>
-    <div th:insert="fragments/base :: assetsHead"></div>
 </head>
+
 <body>
-<nav th:replace="fragments/navbar :: navbar"></nav>
 
-<div class="app-container">
-    <div class="app-header text-center">
-        <h2>Fighters</h2>
-        <p class="text-muted">Showing <span th:text="${total}">0</span> fighters</p>
-    </div>
+<h1>Fighters</h1>
 
-    <div class="players-card">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Health</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">Resistance</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="fighter,itr : ${fighters}">
-                    <th scope="row" th:text="${itr.count}">1</th>
-                    <td th:text="${fighter.name}">Fighter Name</td>
-                    <td th:text="${fighter.health}">1000</td>
-                    <td th:text="${fighter.damage}">50.0</td>
-                    <td th:text="${fighter.resistance}">5.0</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<form method="get" th:action="@{/fighters}">
 
-    <div class="mt-3">
-        <a href="/create-fighter" class="btn btn-primary">Register New Fighter</a>
-    </div>
+    <input type="text"
+           name="search"
+           placeholder="Search name or health"
+           th:value="${search}" />
+
+    <select name="filterType">
+
+        <option value="">All</option>
+
+        <option value="name"
+                th:selected="${filterType == 'name'}">
+            By Name
+        </option>
+
+        <option value="health"
+                th:selected="${filterType == 'health'}">
+            By Health
+        </option>
+
+        <option value="strongest"
+                th:selected="${filterType == 'strongest'}">
+            Strongest
+        </option>
+
+        <option value="balanced"
+                th:selected="${filterType == 'balanced'}">
+            Balanced
+        </option>
+
+    </select>
+
+    <button type="submit">Search</button>
+
+    <a th:href="@{/fighters}">
+        <button type="button">Clear</button>
+    </a>
+
+</form>
+
+<br>
+
+<table border="1">
+
+<thead>
+
+<tr>
+
+<th>
+<a th:href="@{/fighters(sort='name', direction=${direction=='ASC'?'DESC':'ASC'})}">
+Name
+<span th:text="${sort=='name'} ? (${direction=='ASC'} ? '↑':'↓') : ''"></span>
+</a>
+</th>
+
+<th>
+<a th:href="@{/fighters(sort='health', direction=${direction=='ASC'?'DESC':'ASC'})}">
+Health
+<span th:text="${sort=='health'} ? (${direction=='ASC'} ? '↑':'↓') : ''"></span>
+</a>
+</th>
+
+<th>
+<a th:href="@{/fighters(sort='damage', direction=${direction=='ASC'?'DESC':'ASC'})}">
+Damage
+<span th:text="${sort=='damage'} ? (${direction=='ASC'} ? '↑':'↓') : ''"></span>
+</a>
+</th>
+
+<th>
+<a th:href="@{/fighters(sort='resistance', direction=${direction=='ASC'?'DESC':'ASC'})}">
+Resistance
+<span th:text="${sort=='resistance'} ? (${direction=='ASC'} ? '↑':'↓') : ''"></span>
+</a>
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr th:each="fighter : ${fighters}">
+
+<td th:text="${fighter.name}"></td>
+<td th:text="${fighter.health}"></td>
+<td th:text="${fighter.damage}"></td>
+<td th:text="${fighter.resistance}"></td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<br>
+
+<div>
+
+<a th:if="${hasPrevious}"
+   th:href="@{/fighters(page=${currentPage-1}, sort=${sort}, direction=${direction})}">
+Previous
+</a>
+
+<span th:text="'Page ' + (${currentPage}+1) + ' of ' + ${totalPages}"></span>
+
+<a th:if="${hasNext}"
+   th:href="@{/fighters(page=${currentPage+1}, sort=${sort}, direction=${direction})}">
+Next
+</a>
+
 </div>
 
-<div th:insert="fragments/base :: assetsScripts"></div>
 </body>
 </html>

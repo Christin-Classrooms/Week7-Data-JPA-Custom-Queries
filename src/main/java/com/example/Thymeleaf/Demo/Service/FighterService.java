@@ -2,6 +2,9 @@ package com.example.Thymeleaf.Demo.Service;
 
 import com.example.Thymeleaf.Demo.Model.Fighter;
 import com.example.Thymeleaf.Demo.repository.FighterRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +41,31 @@ public class FighterService {
 
     public long countFighters() {
         return fighterRepository.count();
+    }
+
+    // Pagination - get all fighters
+    public Page<Fighter> findAll(Pageable pageable) {
+        return fighterRepository.findAll(pageable);
+    }
+
+    // Search by name
+    public Page<Fighter> findByNameContainingIgnoreCase(String name, Pageable pageable) {
+        return fighterRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    // Filter by health
+    public Page<Fighter> findByHealthGreaterThan(int health, Pageable pageable) {
+        return fighterRepository.findByHealthGreaterThan(health, pageable);
+    }
+
+    // Strongest fighters
+    public Page<Fighter> findStrongestFighters(Pageable pageable) {
+        return fighterRepository.findStrongestFighters(pageable);
+    }
+
+    // Balanced fighters
+    public Page<Fighter> findBalancedFighters(double minHealth, double maxDamage, Pageable pageable) {
+        return fighterRepository.findBalancedFighters(minHealth, maxDamage, pageable);
     }
 
 }
