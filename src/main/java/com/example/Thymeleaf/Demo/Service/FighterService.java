@@ -1,11 +1,13 @@
 package com.example.Thymeleaf.Demo.Service;
 
-import com.example.Thymeleaf.Demo.Model.Fighter;
-import com.example.Thymeleaf.Demo.repository.FighterRepository;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.Thymeleaf.Demo.Model.Fighter;
+import com.example.Thymeleaf.Demo.repository.FighterRepository;
 
 @Service
 public class FighterService {
@@ -20,24 +22,23 @@ public class FighterService {
         return fighterRepository.findAll();
     }
 
-    public void addFighter(Fighter fighter) {
-        fighterRepository.save(fighter);
+    public Page<Fighter> findAll(Pageable pageable) {
+        return fighterRepository.findAll(pageable);
     }
 
-    public Optional<Fighter> getFighterById(int id) {
-        return fighterRepository.findById(id);
+    public Page<Fighter> findByName(String name, Pageable pageable) {
+        return fighterRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
-    public void deleteFighter(int id) {
-        fighterRepository.deleteById(id);
+    public Page<Fighter> findByHealthGreaterThan(int health, Pageable pageable) {
+        return fighterRepository.findByHealthGreaterThan(health, pageable);
     }
 
-    public boolean existsFighter(int id) {
-        return fighterRepository.existsById(id);
+    public Page<Fighter> findStrongest(Pageable pageable) {
+        return fighterRepository.findStrongestFighters(pageable);
     }
 
-    public long countFighters() {
-        return fighterRepository.count();
+    public Page<Fighter> findBalanced(double minHealth, double maxDamage, Pageable pageable) {
+        return fighterRepository.findBalancedFighters(minHealth, maxDamage, pageable);
     }
-
 }
