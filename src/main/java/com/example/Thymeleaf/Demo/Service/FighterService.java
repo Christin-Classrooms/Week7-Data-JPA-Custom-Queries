@@ -3,6 +3,8 @@ package com.example.Thymeleaf.Demo.Service;
 import com.example.Thymeleaf.Demo.Model.Fighter;
 import com.example.Thymeleaf.Demo.repository.FighterRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
