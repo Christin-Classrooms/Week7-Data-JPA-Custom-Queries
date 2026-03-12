@@ -18,6 +18,12 @@ body{
     border-radius:8px;
     box-shadow:0 6px 18px rgba(0,0,0,0.06);
 }
+.fighters-card{
+    padding:20px;
+    background:#fff;
+    border-radius:8px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+}
 .status-badge-online{
     background: #198754;
     color: #fff;
