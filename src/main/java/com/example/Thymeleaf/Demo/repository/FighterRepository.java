@@ -1,5 +1,4 @@
-package com.example.Thymeleaf.Demo.Repository;
-
+package com.example.Thymeleaf.Demo.repository;
 import com.example.Thymeleaf.Demo.Model.Fighter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
